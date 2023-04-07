@@ -5,7 +5,7 @@ import config
 from telebot import types
 import chatgpt
 import menu
-import neural
+import toxic
 
 location = {}
 
@@ -48,7 +48,7 @@ def friend_chat(message):
     elif location[message.chat.id] == 'toxic_AI': 
         print(message.text)
         prompt = [message.text]
-        ans = neural.toxic_AI(prompt)
+        ans = toxic.toxic_AI(prompt)
         bot.send_message(message.chat.id, ans)
     elif location[message.chat.id] == 'friend_chat': 
         bot_message = bot.send_message(message.chat.id, '<b>Chat-GPT</b> is responding...', parse_mode = 'html')
