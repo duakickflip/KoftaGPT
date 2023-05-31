@@ -1,11 +1,13 @@
+import os
 import telebot
 import openai
-import os
-import config
 from telebot import types
-import chatgpt
-import menu
-import toxic
+import config
+from locations.mafia import mafia
+from locations.gpt_chat import gpt_response
+from locations import menu
+
+
 
 location = {}
 
@@ -25,12 +27,13 @@ def info(message):
 
 
 @bot.message_handler(func = lambda message: True)
-def friend_chat(message):
+def gpt_chat(message):
     global location
     if message.text == 'Назад':
         location[message.chat.id] = 'menu'
         menu.start(message)
         return
+    
     elif message.text == 'GPT-3':
         location[message.chat.id] = 'friend_chat'
         keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
@@ -38,22 +41,20 @@ def friend_chat(message):
         keyboard.add(btn1)
         bot.send_message(message.chat.id, '<b>Chat-GPT</b> слушает:', parse_mode = 'html', reply_markup = keyboard)
         return
-    elif message.text == 'AI':
-        location[message.chat.id] = 'toxic_AI'
-        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-        btn1 = types.KeyboardButton(text="Назад")
-        keyboard.add(btn1)
-        bot.send_message(message.chat.id, 'токсичная нейросеть...', parse_mode = 'html', reply_markup = keyboard)
+    
+    elif message.text == 'Мафия':
+        location[message.chat.id] = 'mafia'
+        #btn1 = types.KeyboardButton(text="Назад")
+        #keyboard.add(btn1)
+        bot.send_message(message.chat.id, 'Игра в мафию:', parse_mode = 'html')
+        mafia.game_loop(message.chat.id)
         return
-    elif location[message.chat.id] == 'toxic_AI': 
-        print(message.text)
-        prompt = [message.text]
-        ans = toxic.toxic_AI(prompt)
-        bot.send_message(message.chat.id, ans)
+    
     elif location[message.chat.id] == 'friend_chat': 
         bot_message = bot.send_message(message.chat.id, '<b>Chat-GPT</b> is responding...', parse_mode = 'html')
-        ans = chatgpt.gpt_response(message)
+        ans = gpt_response(message)
         bot.edit_message_text(ans,message.chat.id, bot_message.message_id)
+
     else:
         bot.send_message(message.chat.id, 'Извини, я не знаю, что ответить')
 
