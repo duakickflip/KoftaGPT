@@ -10,7 +10,7 @@ from locations import menu
 
 
 location = {}
-
+history = {}
 openai.api_key = os.getenv('Open_AI_Token')
 bot = telebot.TeleBot(os.getenv('Telegram_Token'))
 
@@ -29,13 +29,16 @@ def info(message):
 @bot.message_handler(func = lambda message: True)
 def gpt_chat(message):
     global location
+    global history
     if message.text == 'Назад':
         location[message.chat.id] = 'menu'
+        history.update({message.text: ''})
         menu.start(message)
         return
     
     elif message.text == 'GPT-3':
         location[message.chat.id] = 'friend_chat'
+        history.update({message.chat.id: ''})
         keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
         btn1 = types.KeyboardButton(text="Назад")
         keyboard.add(btn1)
@@ -52,8 +55,9 @@ def gpt_chat(message):
     
     elif location[message.chat.id] == 'friend_chat': 
         bot_message = bot.send_message(message.chat.id, '<b>Chat-GPT</b> is responding...', parse_mode = 'html')
-        ans = gpt_response(message)
+        ans = gpt_response(history[message.chat.id] + ' ' + message.text)
         bot.edit_message_text(ans,message.chat.id, bot_message.message_id)
+        history[message.chat.id] = history[message.chat.id] + 'You: ' + message.text + 'Friend: ' + ans
 
     else:
         bot.send_message(message.chat.id, 'Извини, я не знаю, что ответить')
