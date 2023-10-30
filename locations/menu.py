@@ -7,7 +7,8 @@ bot = telebot.TeleBot(os.getenv('Telegram_Token'))
 def start(message):
     keyboard = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     btn1 = types.KeyboardButton(text="GPT-3")
-    keyboard.add(btn1)
+    btn2 = types.KeyboardButton(text="Циферки")
+    keyboard.add(btn1, btn2)
     bot.send_message(message.chat.id, 'Вы находитесь в меню \nНавигация по боту "/info"', reply_markup = keyboard)
     return
 
