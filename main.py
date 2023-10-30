@@ -3,7 +3,6 @@ import telebot
 import openai
 from telebot import types
 import config
-from locations.mafia import mafia
 from locations.gpt_chat import gpt_response
 from locations import menu
 
@@ -43,14 +42,6 @@ def gpt_chat(message):
         btn1 = types.KeyboardButton(text="Назад")
         keyboard.add(btn1)
         bot.send_message(message.chat.id, '<b>Chat-GPT</b> слушает:', parse_mode = 'html', reply_markup = keyboard)
-        return
-    
-    elif message.text == 'Мафия':
-        location[message.chat.id] = 'mafia'
-        #btn1 = types.KeyboardButton(text="Назад")
-        #keyboard.add(btn1)
-        bot.send_message(message.chat.id, 'Игра в мафию:', parse_mode = 'html')
-        mafia.game_loop(message.chat.id)
         return
     
     elif location[message.chat.id] == 'friend_chat': 
