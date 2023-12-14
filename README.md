@@ -1,4 +1,4 @@
-# Chatbot collection of author's developments | Чат-бот сборник авторских наработок
+# Chatbot collection of author's developments
 
 
 # Installation
